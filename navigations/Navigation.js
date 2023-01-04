@@ -18,27 +18,28 @@ export default function Navigation() {
             <Tab.Screen
               name="restaurants-stack"
               component={RestaurantsStack}
-              options={{ title:"Restaurantes" }}
+              options={{ title:"Restaurantes", headerShown: false  }}
+              
             />
             <Tab.Screen
               name="favourites-stack"
               component={FavouritesStack}
-              options={{ title:"Favoritos" }}
+              options={{ title:"Favoritos", headerShown: false  }}
             />
             <Tab.Screen
               name="top-restaurants-stack"
               component={TopRestaurantsStack}
-              options={{ title: "Top 5" }}
+              options={{ title: "Top 5", headerShown: false }}
             />
             <Tab.Screen
               name="search-stack"
               component={SearchStack}
-              options={{ title:"Buscar" }}
+              options={{ title:"Buscar", headerShown: false  }}
             />
             <Tab.Screen
               name="account-stack"
               component={AccountStack}
-              options={{ title:"Cuenta" }}
+              options={{ title:"Cuenta", headerShown: false  }}
             />
 
         </Tab.Navigator>
