@@ -1,13 +1,19 @@
-import {firebaseApp} from './firebase'
-import * as firebase from 'firebase'
-import 'firebase/firestore'
+import { initializeAuth } from "firebase/auth"
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { firebaseApp } from './firebase'
 
-const db = firebase.firestore(firebaseApp)
+initializeAuth(firebaseApp)
+
 
 export const isUserLogged = () => {
     let isLogged = false
     
-    firebase.auth().onAuthStateChanged((user) => {
-        user !== null && isLogged == false 
+    onAuthStateChanged(getAuth(),(user) => {
+        user !== null && (isLogged = true)
     })
-}   
+    return isLogged
+}  
+
+export const getCurrentUser = () => {
+    return getAuth().currentUser
+}
