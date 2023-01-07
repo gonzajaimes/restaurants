@@ -1,9 +1,12 @@
 import { ScrollView, StyleSheet, Text, View, Image } from 'react-native'
 import React from 'react'
 import { Button } from '@rneui/base'
+import { useNavigation } from '@react-navigation/native' 
 
 
 export default function UserGuest() {
+  const navigation = useNavigation() 
+
   return (
     <ScrollView
       centerContent
@@ -21,7 +24,7 @@ export default function UserGuest() {
         <Button
           buttonStyle={styles.button}
           title="Ver tu perfil"
-          onPress={() => console.log("Click!!")}
+          onPress={() => navigation.navigate("login")}
         />
       
     </ScrollView>
