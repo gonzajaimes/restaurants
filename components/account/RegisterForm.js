@@ -4,18 +4,26 @@ import { Button, Icon, Input } from '@rneui/base'
 
 export default function RegisterForm() {
     const [showPassword, setShowPassword] = useState(false)
+    const [formData, setformData] = useState(defaultFormValues())
+
+    const onChange = (e,type) => {
+        setformData({...formData,[type]: e.nativeEvent.text})
+    }
+
   return (
     <View style={styles.form}>
       <Input
             style={styles.input}
             placeholder='Ingresa tu emai...'
-        
+            onChange={(e) => onChange(e,"email")}
+            keyboardType = "email-address"
       />
       <Input
             style={styles.input}
             placeholder='Ingresa tu contraseña...'
             password={true}
             secureTextEntry={!showPassword}
+            onChange={(e) => onChange(e,"password")}
             rightIcon={
                 <Icon
                    type="material-community"
@@ -30,6 +38,7 @@ export default function RegisterForm() {
             placeholder='Confirma tu contraseña...'
             password={true}
             secureTextEntry={!showPassword}
+            onChange={(e) => onChange(e,"confirm")}
             rightIcon={
                 <Icon
                    type="material-community"
@@ -38,15 +47,20 @@ export default function RegisterForm() {
                    onPress={() => setShowPassword(!showPassword)}
                 />
             }
+            
       />
       <Button
             title="Registrar Nuevo Usuario"
             containerStyle={styles.btnContainer}
             buttonStyle={styles.btn}
+            onPress = {() => console.log(formData)}
       />
 
     </View>
   )
+}
+const defaultFormValues = () => {
+    return {email: "", password: "", confirm: ""} 
 }
 
 const styles = StyleSheet.create({
