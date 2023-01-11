@@ -13,7 +13,7 @@ export default function UserLogged() {
           title= "Cerrar Sesión"
           onPress={() => {
               closeSession()
-              navigation.navigate("account")
+              navigation.navigate("restaurants")
           }}
           
       />

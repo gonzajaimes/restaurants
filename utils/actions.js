@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, initializeAuth, signOut } from "firebase/auth"
+import { createUserWithEmailAndPassword, initializeAuth, signInWithEmailAndPassword, signOut } from "firebase/auth"
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { firebaseApp } from './firebase'
 
@@ -27,7 +27,20 @@ export const registerUser = async(email,password) =>{
         await createUserWithEmailAndPassword(getAuth(),email, password)
         
     } catch (error) {
-        result.error = "Este correo ya está registrado"
+        result.statusresponse = false
+        result.error = "Este correo ya está registrado."
+       
+    }
+    return result
+}
+export const loginWithEmailAndPasword = async(email,password) =>{
+    const result = {statusresponse: true, error: null}
+    try {
+        await signInWithEmailAndPassword(getAuth(),email, password)
+        
+    } catch (error) {
+        result.statusresponse= false
+        result.error = "Usuario o contraseña no validos"
        
     }
     return result
