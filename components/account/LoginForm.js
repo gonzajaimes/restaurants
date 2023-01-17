@@ -31,7 +31,7 @@ export default function LoginForm() {
         const result = await loginWithEmailAndPasword(formData.email, formData.password)
         setLoading(false)
         
-        if (!result.statusresponse) {
+        if (!result.statusResponse) {
             setErrorEmail(result.error)
             setErrorPassword(result.error)
             return
