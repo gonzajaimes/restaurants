@@ -1,6 +1,8 @@
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, initializeAuth,         signInWithEmailAndPassword, signOut, updateProfile } from "firebase/auth"
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, initializeAuth, 
+        signInWithEmailAndPassword, signOut, updateProfile, EmailAuthProvider, 
+        reauthenticateWithCredential, updateEmail} from "firebase/auth"
 import { firebaseApp } from './firebase'
-import { getDownloadURL, getStorage, ref, uploadBytes, uploadBytesResumable} from 'firebase/storage'
+import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage'
 import { fileToBlob } from "./helpers"
 
 initializeAuth(firebaseApp)
@@ -76,5 +78,31 @@ export const updateTheProfile = async(data) => {
         result.error = error
     }
     return result
+} 
 
-}   
+export const reAuthenticate = async(password) => {
+    const result = { statusResponse: true, error: null }
+    const user = getCurrentUser()
+    const credentials = EmailAuthProvider.credential(user.email, password)
+
+    try {
+       await reauthenticateWithCredential(user,credentials)
+        
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result
+} 
+
+export const updateTheEmail = async(email) => {
+    const result = { statusResponse: true, error: null }
+    try {
+       await updateEmail(getAuth().currentUser,email)
+        
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result
+} 
