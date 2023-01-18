@@ -1,6 +1,6 @@
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, initializeAuth, 
         signInWithEmailAndPassword, signOut, updateProfile, EmailAuthProvider, 
-        reauthenticateWithCredential, updateEmail} from "firebase/auth"
+        reauthenticateWithCredential, updateEmail, updatePassword} from "firebase/auth"
 import { firebaseApp } from './firebase'
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage'
 import { fileToBlob } from "./helpers"
@@ -99,6 +99,18 @@ export const updateTheEmail = async(email) => {
     const result = { statusResponse: true, error: null }
     try {
        await updateEmail(getAuth().currentUser,email)
+        
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result
+} 
+
+export const updateThePassword = async(password) => {
+    const result = { statusResponse: true, error: null }
+    try {
+       await updatePassword(getAuth().currentUser,password)
         
     } catch (error) {
         result.statusResponse = false
