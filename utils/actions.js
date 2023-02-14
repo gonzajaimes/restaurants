@@ -2,10 +2,12 @@ import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, initialize
         signInWithEmailAndPassword, signOut, updateProfile, EmailAuthProvider, 
         reauthenticateWithCredential, updateEmail, updatePassword} from "firebase/auth"
 import { firebaseApp } from './firebase'
+import { getFirestore, addDoc, collection } from 'firebase/firestore'
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage'
 import { fileToBlob } from "./helpers"
 
 initializeAuth(firebaseApp)
+const db = getFirestore(firebaseApp)
 
 
 export const isUserLogged = () => {
@@ -118,3 +120,17 @@ export const updateThePassword = async(password) => {
     }
     return result
 } 
+
+export const addDocumentWithoutId = async(theCollection, data) => {
+    const result = { statusResponse: true, error: null }
+    
+    try {            
+        await addDoc(collection(db,theCollection),data) 
+                     
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
+

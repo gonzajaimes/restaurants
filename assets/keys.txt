@@ -1,0 +1,8 @@
+AIzaSyC4X6MM-fLVsPVCtXealApfXcsoJLKR6aE
+Configuration: Build Credentials I9XJf9nG01 (Default)  
+Keystore  
+Type                JKS
+Key Alias           950cf973df1f887355d2598a6e013e3c
+MD5 Fingerprint     E3:5A:C1:BB:80:16:F4:C0:D1:90:1F:B8:5D:84:FC:75
+SHA1 Fingerprint    10:11:7E:A7:B8:94:28:37:D9:0F:5C:B9:B6:7F:B2:FB:93:68:57:F0
+SHA256 Fingerprint  51:DF:AE:50:BA:63:30:4C:6A:6B:CD:65:B4:60:5D:80:84:4A:57:40:A6:85:65:CF:F7:3C:4B:7D:BD:39:8C:B6

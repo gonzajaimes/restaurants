@@ -18,14 +18,22 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.oreostudios.restaurants"
     },
     "android": {
+      "package": "com.oreostudios.restaurants",
+      "versionCode": 2,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-     "permissions": [
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyC4X6MM-fLVsPVCtXealApfXcsoJLKR6aE"
+        }
+      },
+      "permissions": [
         "CAMERA_ROLL",
         "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE",
@@ -37,6 +45,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "ad3da597-7f7d-4cbd-90a2-796b374dc1bd"
+      }
     }
   }
 }
