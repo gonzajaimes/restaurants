@@ -2,7 +2,7 @@ import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, initialize
         signInWithEmailAndPassword, signOut, updateProfile, EmailAuthProvider, 
         reauthenticateWithCredential, updateEmail, updatePassword} from "firebase/auth"
 import { firebaseApp } from './firebase'
-import { getFirestore, addDoc, collection } from 'firebase/firestore'
+import { getFirestore, addDoc, collection, getDocs, query, orderBy, limit, startAfter } from 'firebase/firestore'
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage'
 import { fileToBlob } from "./helpers"
 
@@ -130,6 +130,52 @@ export const addDocumentWithoutId = async(theCollection, data) => {
     } catch (error) {
         result.statusResponse = false
         result.error = error
+    }
+    return result     
+}
+
+export const getRestaurants = async(limitRestaurants) => {
+    const result = { statusResponse: true, error: null, restaurants: [], startRestaurant: null  }
+    const restaurantsRef = collection(db,"restaurants")
+    const q =   query(restaurantsRef,orderBy("createAt","desc"),limit(limitRestaurants))
+    
+    try {            
+        const response = await getDocs(q)
+        if (response.docs.length > 0) {
+            result.startRestaurant = response.docs[response.docs.length - 1]
+        } 
+        response.forEach( (doc) => {
+            const restaurant = doc.data()
+            restaurant.id = doc.id
+            result.restaurants.push(restaurant)
+        })
+                     
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error       
+    }
+    return result     
+}
+
+export const getMoreRestaurants = async(limitRestaurants, startRestaurant) => {
+    const result = { statusResponse: true, error: null, restaurants: [], startRestaurant: null  }
+    const restaurantsRef = collection(db,"restaurants")
+    const q =   query(restaurantsRef,orderBy("createAt","desc"),limit(limitRestaurants), startAfter(startRestaurant.data().createAt))
+    
+    try {            
+        const response = await getDocs(q)
+        if (response.docs.length > 0) {
+            result.startRestaurant = response.docs[response.docs.length - 1]
+        } 
+        response.forEach( (doc) => {
+            const restaurant = doc.data()
+            restaurant.id = doc.id
+            result.restaurants.push(restaurant)
+        })
+                     
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error       
     }
     return result     
 }
