@@ -2,7 +2,8 @@ import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, initialize
         signInWithEmailAndPassword, signOut, updateProfile, EmailAuthProvider, 
         reauthenticateWithCredential, updateEmail, updatePassword} from "firebase/auth"
 import { firebaseApp } from './firebase'
-import { getFirestore, addDoc, collection, getDocs, query, orderBy, limit, startAfter } from 'firebase/firestore'
+import { getFirestore, addDoc, collection, getDocs, query, 
+         orderBy, limit, startAfter, doc, getDoc } from 'firebase/firestore'
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage'
 import { fileToBlob } from "./helpers"
 
@@ -176,6 +177,22 @@ export const getMoreRestaurants = async(limitRestaurants, startRestaurant) => {
     } catch (error) {
         result.statusResponse = false
         result.error = error       
+    }
+    return result     
+}
+
+export const getDocumentById = async(theCollection, id) => {
+    const result = { statusResponse: true, error: null, document: null }
+    const restaurantsRef = collection(db,theCollection)
+    const documment = doc(restaurantsRef,id)
+    
+    try {
+        const response = await getDoc(documment)
+        result.document = response.data()
+        result.document.id = response.id
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
     }
     return result     
 }
