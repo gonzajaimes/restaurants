@@ -232,3 +232,18 @@ export const getRestaurantReviews = async(id) => {
     }
     return result     
 }
+
+export const getIsFavorite = async(idRestaurant) => {
+    const result = { statusResponse: true, error: null, isFavorite: false }
+    const favoritesRef = collection(db,"favourites")
+    const q = query(favoritesRef,where("idRestaurant","==",idRestaurant),where("idUser","==",getCurrentUser().uid))
+    
+    try {
+        const response = await getDocs(q)
+        result.isFavorite = response.docs.length > 0
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
