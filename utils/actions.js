@@ -3,7 +3,7 @@ import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, initialize
         reauthenticateWithCredential, updateEmail, updatePassword} from "firebase/auth"
 import { firebaseApp } from './firebase'
 import { getFirestore, addDoc, collection, getDocs, query, 
-         orderBy, limit, startAfter, doc, getDoc } from 'firebase/firestore'
+         orderBy, limit, startAfter, doc, getDoc, updateDoc, where } from 'firebase/firestore'
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage'
 import { fileToBlob } from "./helpers"
 
@@ -197,3 +197,38 @@ export const getDocumentById = async(theCollection, id) => {
     return result     
 }
 
+export const updateDocument = async(theCollection, id, data) => {
+    const result = { statusResponse: true, error: null }
+    const collectionRef = collection(db,theCollection)
+    const documment = doc(collectionRef,id)
+    try {
+        const response = updateDoc(documment,data)
+      
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+} 
+
+export const getRestaurantReviews = async(id) => {
+    const result = { statusResponse: true, error: null, reviews: [] }
+    const collectionRef = collection(db,"reviews")
+    const q =   query(collectionRef,where("idRestaurant","==",id))
+    
+    try {            
+        const response = await getDocs(q)
+        
+        response.forEach( (doc) => {
+            const review = doc.data()
+            review.id = doc.id
+            result.reviews.push(review)
+        })
+                      
+    } catch (error) {
+        console.log(error)
+        result.statusResponse = false
+        result.error = error       
+    }
+    return result     
+}
