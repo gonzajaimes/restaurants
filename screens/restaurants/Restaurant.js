@@ -9,7 +9,7 @@ import Toast from 'react-native-easy-toast'
 
 import CarouselImages from '../../components/CarouselImages'
 import Loading from '../../components/Loading'
-import { addDocumentWithoutId, getCurrentUser, getDocumentById, getIsFavorite } from '../../utils/actions'
+import { addDocumentWithoutId, deleteFavorite, getCurrentUser, getDocumentById, getIsFavorite } from '../../utils/actions'
 import { formatPhone } from '../../utils/helpers'
 import MapRestaurant from '../../components/restaurants/MapRestaurant'
 import ListReviews from '../../components/restaurants/ListReviews'
@@ -74,8 +74,17 @@ export default function Restaurant({navigation, route}) {
 
   }
   
-  const removeFavorite = () => {
-    console.log("Remove Favourite")
+  const removeFavorite = async() => {
+    setLoading(true)
+      const response = await deleteFavorite(restaurant.id)
+    setLoading(false)  
+      if (response.statusResponse){
+        setIsFavorite(false)
+        toastRef.current.show("Restaurante eliminado de favoritos", 3000)
+      } else{
+        toastRef.current.show("No se pudo eliminar el restaurante de favoritos, por favor intenta más tarde", 3000)
+      }
+    
   }
   
   if (!restaurant){

@@ -3,7 +3,7 @@ import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, initialize
         reauthenticateWithCredential, updateEmail, updatePassword} from "firebase/auth"
 import { firebaseApp } from './firebase'
 import { getFirestore, addDoc, collection, getDocs, query, 
-         orderBy, limit, startAfter, doc, getDoc, updateDoc, where } from 'firebase/firestore'
+         orderBy, limit, startAfter, doc, getDoc, updateDoc, where, deleteDoc } from 'firebase/firestore'
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage'
 import { fileToBlob } from "./helpers"
 
@@ -242,6 +242,24 @@ export const getIsFavorite = async(idRestaurant) => {
         const response = await getDocs(q)
         result.isFavorite = response.docs.length > 0
     } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
+
+export const deleteFavorite = async(idRestaurant) => {
+    const result = { statusResponse: true, error: null}
+    const favoritesRef = collection(db,"favourites")
+    const q = query(favoritesRef,where("idRestaurant","==",idRestaurant),where("idUser","==",getCurrentUser().uid))
+    
+    try {
+        const response = await getDocs(q)
+        response.forEach(async(theDoc) =>{
+            const favoriteRef = doc(favoritesRef,theDoc.id)
+            await deleteDoc(favoriteRef)
+        })
+    } catch (error) { 
         result.statusResponse = false
         result.error = error
     }
