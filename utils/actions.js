@@ -272,21 +272,36 @@ export const getFavorites = async() => {
     const q = query(favoritesRef,where("idUser","==",getCurrentUser().uid))
     
     try {
-        const response = await getDocs(q)
-        const restaurantIds = []
-        response.forEach(async(doc) =>{
-           const favorite = doc.data()
-           restaurantIds.push(favorite.idRestaurant)
-        })
+        const response = await getDocs(q)        
         await Promise.all(
-            map(restaurantIds,async(restaurantId) => {
-                const response2 = await getDocumentById("restaurants", restaurantId)
-                if (response2.statusResponse) {
-                    result.favorites.push(response2.document)
+            map(response.docs,async(doc) => {
+                const favorite = doc.data()
+                const restaurant = await getDocumentById("restaurants", favorite.idRestaurant)
+                if (restaurant.statusResponse) {
+                    result.favorites.push(restaurant.document)
                 }
             })
         )
     } catch (error) { 
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
+
+export const getTopRestaurants = async(limitRestaurants) => {
+    const result = { statusResponse: true, error: null, restaurants: [] }
+    const restaurantsRef = collection(db,"restaurants")
+    const q = query(restaurantsRef,orderBy("rating","desc"),limit(limitRestaurants))
+    
+    try {
+        const response = await getDocs(q)
+        response.forEach(async(doc) =>{
+            const restaurant = doc.data()
+            restaurant.id = doc.id
+            result.restaurants.push(restaurant)
+         })
+    } catch (error) {
         result.statusResponse = false
         result.error = error
     }

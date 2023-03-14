@@ -67,7 +67,7 @@ export default function Navigation() {
             <Tab.Screen
               name="top-restaurants-stack"
               component={TopRestaurantsStack}
-              options={{ title: "Top 5", headerShown: false }}
+              options={{ title: "Top 10", headerShown: false }}
             />
             <Tab.Screen
               name="search-stack"
