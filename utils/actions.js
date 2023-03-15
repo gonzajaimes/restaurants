@@ -11,7 +11,6 @@ import { map } from "lodash"
 initializeAuth(firebaseApp)
 const db = getFirestore(firebaseApp)
 
-
 export const isUserLogged = () => {
     let isLogged = false
     
@@ -306,4 +305,25 @@ export const getTopRestaurants = async(limitRestaurants) => {
         result.error = error
     }
     return result     
+}
+export const searchRestaurants = async(criteria) => {
+    const result = { statusResponse: true, error: null, restaurants: [] }
+    const restaurantsRef = collection(db,"restaurants")
+    const q = query(restaurantsRef,where("name","==",criteria))
+    
+
+    try {
+        const response = await getDocs(q)
+       
+        response.forEach(async(doc) =>{
+            const restaurant = doc.data()
+            restaurant.id = doc.id
+            result.restaurants.push(restaurant)
+         })
+    } catch (error) {
+       
+        result.statusResponse = false
+        result.error = error
+    }
+    return result    
 }
