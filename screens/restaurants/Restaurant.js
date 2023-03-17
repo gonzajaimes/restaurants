@@ -10,7 +10,7 @@ import Toast from 'react-native-easy-toast'
 import CarouselImages from '../../components/CarouselImages'
 import Loading from '../../components/Loading'
 import { addDocumentWithoutId, deleteFavorite, getCurrentUser, getDocumentById, getIsFavorite } from '../../utils/actions'
-import { formatPhone } from '../../utils/helpers'
+import { callNumber, formatPhone, sendEmail, sendWhatsApp } from '../../utils/helpers'
 import MapRestaurant from '../../components/restaurants/MapRestaurant'
 import ListReviews from '../../components/restaurants/ListReviews'
 
@@ -20,14 +20,17 @@ const widthScreen = Dimensions.get("window").width
 export default function Restaurant({navigation, route}) {
   const {id, name } = route.params
   const toastRef = useRef()
-  const [loading, setLoading] = useState(false)
   const [restaurant, setRestaurant] = useState(null)
   const [activeSlide, setActiveSlide] = useState(0)
   const [isFavorite, setIsFavorite] = useState(false)
   const [userLogged, setUserLogged] = useState(false)
+  const [currentUser, setCurrentUser] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [modalNotificaton, setModalNotificaton] = useState(false)
 
   onAuthStateChanged(getAuth(), (userInfo) => {
     userInfo ? setUserLogged(true) : setUserLogged(false)
+    setCurrentUser(userInfo)
   })
 
   useFocusEffect(
@@ -122,6 +125,11 @@ export default function Restaurant({navigation, route}) {
                 address={restaurant.address}
                 email={restaurant.email}
                 phone={formatPhone(restaurant.callingCode, restaurant.phone)}
+                currentUser={currentUser}
+                callingCode={restaurant.callingCode}
+                phoneNoFormat={restaurant.phone}
+                setLoading={setLoading}
+                setModalNotification={setModalNotificaton}
       />
       <ListReviews
         navigation={navigation}
@@ -133,17 +141,40 @@ export default function Restaurant({navigation, route}) {
   )
 }
 
-function RestaurantInfo({name, location, address, email, phone}){
+function RestaurantInfo({name, location, address, email, phone, currentUser, callingCode, phoneNoFormat, setLoading, setModalNotification}){
   const listInfo = [
-    {text: address, iconName: "map-marker"},
-    {text: phone, iconName: "phone"},
-    {text: email, iconName: "at"}
+    {type: "address", text: address, iconLeft: "map-marker"},
+    {type: "phone", text: phone, iconLeft: "phone", iconRight: "whatsapp", actionLeft: "callPhone", actionRight: "sendWhatsApp"},
+    {type: "email", text: email, iconLeft: "at", actionLeft:"sendEmail"}
   ]
+  const actionLeft = (type) => {  
+    if (type == "phone") {
+      callNumber(phone)
+    } else if (type == "email") {
+      if (currentUser) {
+          sendEmail(email, "Interesado", `Soy ${currentUser.displayName}, estoy interesado en sus servicios`)
+      } else {
+          sendEmail(email, "Interesado", `Estoy interesado en sus servicios`)
+      }
+    }
+  } 
+  
+  const actionRight = (type) => {
+    if (type == "phone") {
+      if (currentUser) {
+          sendWhatsApp(`${callingCode} ${phoneNoFormat}`, `Soy ${currentUser.displayName}, estoy interesado en sus servicios`)
+      } else {
+          sendWhatsApp(`${callingCode} ${phoneNoFormat}`, `Estoy interesado en sus servicios`)
+      }
+  } else if (type == "addres") {
+      setModalNotification(true)
+  }
+  } 
   return(
     <View style={styles.viewRestaurantInfo}>
         <Text style={styles.restaurantInfoTitle}>
           Información sobre el restaurante
-        </Text>
+        </Text> 
         <MapRestaurant
           location={location}
           name={name}
@@ -157,12 +188,24 @@ function RestaurantInfo({name, location, address, email, phone}){
             >
               <Icon
                 type="material-community"
-                name={item.iconName}
+                name={item.iconLeft}
                 color="#452783"
+                onPress={() => actionLeft(item.type) }
               />
               <ListItem.Content>
                 <ListItem.Title>{item.text}</ListItem.Title>
               </ListItem.Content>
+              {
+                 item.iconRight && ( 
+                   <Icon
+                     type="material-community"
+                     name={item.iconRight}
+                     color="#452783"
+                     onPress={() => actionRight(item.type)}
+                   />
+                 )
+              }
+
             </ListItem>
           ))
         }
